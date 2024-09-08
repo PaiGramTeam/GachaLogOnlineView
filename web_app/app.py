@@ -64,7 +64,7 @@ class WebApp:
         except ValueError:
             return pages.ErrorPage(code=422, message="Invalid parameters")
         except FileNotFoundError:
-            return pages.ErrorPage(code=404, message="Not Found")
+            return pages.ErrorPage(code=404, message="已失效，请尝试重新获取")
 
         if route == "/gacha_log":
             filtered_logs = await gacha_log_functions.get_gacha_logs_base(params)
