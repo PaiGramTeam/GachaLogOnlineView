@@ -20,20 +20,20 @@ class AssetsGen:
     # gs
 
     async def fetch_avatars_gs(self):
-        data = await self.fetch("https://api.ambr.top/v2/chs/avatar")
+        data = await self.fetch("https://gi.yatta.moe/api/v2/chs/avatar")
         new_data = {}
         for item in data["data"]["items"].values():
             new_data[item["name"]] = (
-                f"https://api.ambr.top/assets/UI/{item['icon']}.png"
+                f"https://gi.yatta.moe/assets/UI/{item['icon']}.png"
             )
         return new_data
 
     async def fetch_weapons_gs(self):
-        data = await self.fetch("https://api.ambr.top/v2/chs/weapon")
+        data = await self.fetch("https://gi.yatta.moe/api/v2/chs/weapon")
         new_data = {}
         for item in data["data"]["items"].values():
             new_data[item["name"]] = (
-                f"https://api.ambr.top/assets/UI/{item['icon']}.png"
+                f"https://gi.yatta.moe/assets/UI/{item['icon']}.png"
             )
         return new_data
 
