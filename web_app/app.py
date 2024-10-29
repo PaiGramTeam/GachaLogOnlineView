@@ -72,9 +72,12 @@ class WebApp:
             gacha_logs = filtered_logs[
                 (params.page - 1) * params.size : params.page * params.size
             ]
-            gacha_icons = await self._get_gacha_icons(game, gacha_logs)
+            gacha_icons, gacha_icons_hash = await self._get_gacha_icons(game, gacha_logs)
             await asyncio.create_task(
                 page.client_storage.set_async("gacha_log.gacha_icons", gacha_icons)
+            )
+            await asyncio.create_task(
+                page.client_storage.set_async("gacha_log.gacha_icons_hash", gacha_icons_hash)
             )
 
             view = pages.GachaLogPage(
@@ -91,10 +94,15 @@ class WebApp:
 
     async def _get_gacha_icons(
         self, game: Game, gachas: Sequence[BaseGachaItem]
-    ) -> dict[str | int, str]:
-        cached_gacha_icons: dict[str | int, str] = (
-            await self._page.client_storage.get_async("gacha_log.gacha_icons") or {}
-        )
+    ) -> tuple[dict[str | int, str], str]:
+        gacha_icons_hash = assets.get_hash()
+        cached_gacha_icons_hash: str = await self._page.client_storage.get_async("gacha_log.gacha_icons_hash") or ""
+        if gacha_icons_hash == cached_gacha_icons_hash:
+            cached_gacha_icons: dict[str | int, str] = (
+                    await self._page.client_storage.get_async("gacha_log.gacha_icons") or {}
+            )
+        else:
+            cached_gacha_icons = {}
         result: dict[str | int, str] = {}
         for gacha in gachas:
             key = gacha.key
@@ -109,7 +117,12 @@ class WebApp:
                 "gacha_log.gacha_icons", cached_gacha_icons
             )
         )
-        return result
+        await asyncio.create_task(
+            self._page.client_storage.set_async(
+                "gacha_log.gacha_icons_hash", gacha_icons_hash
+            )
+        )
+        return result, gacha_icons_hash
 
     @property
     def gacha_app_bar(self) -> ft.AppBar:

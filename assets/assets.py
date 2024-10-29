@@ -43,5 +43,8 @@ class Assets:
             return self.get_gacha_icon_mc(item_id)
         return DEFAULT_ICON
 
+    def get_hash(self) -> str:
+        return self.genshin_assets["hash"] + self.mc_assets["hash"]
+
 
 assets = Assets()

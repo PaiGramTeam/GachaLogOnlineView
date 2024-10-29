@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 
 import aiofiles
@@ -43,6 +44,7 @@ class AssetsGen:
         data.update(avatars)
         weapons = await self.fetch_weapons_gs()
         data.update(weapons)
+        data["hash"] = hashlib.sha256(",".join(data.values()).encode()).hexdigest()
         async with aiofiles.open(ASSETS_GS_PATH, "w", encoding="utf-8") as f:
             await f.write(ujson.dumps(data, ensure_ascii=False, indent=4))
 
@@ -76,6 +78,7 @@ class AssetsGen:
         data.update(avatars)
         weapons = await self.fetch_weapons_mc()
         data.update(weapons)
+        data["hash"] = hashlib.sha256(",".join(data.values()).encode()).hexdigest()
         async with aiofiles.open(ASSETS_MC_PATH, "w", encoding="utf-8") as f:
             await f.write(ujson.dumps(data, ensure_ascii=False, indent=4))
 
